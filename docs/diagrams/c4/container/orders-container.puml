@@ -1,0 +1,31 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Orders System - Container
+
+Person(customer, "Customer", "Пользователь")
+
+System_Boundary(s1, "Orders System") {
+    Container(web, "Web UI", "React SPA", "Фронтенд в браузере")
+    Container(api, "Core API", "Spring Boot", "REST API + бизнес-логика")
+    Container(worker, "Async Worker", "Spring Boot", "Фоновые задачи/консьюмеры")
+
+    ContainerDb(db, "PostgreSQL", "DB", "Заказы, платежи, статусы")
+    ContainerDb(cache, "Redis", "Cache", "Кэш, дедупликация, rate-limit")
+    ContainerQueue(kafka, "Kafka", "Queue", "События заказов")
+}
+
+System_Ext(paymentProvider, "Payment Provider", "Платежный провайдер")
+
+Rel(customer, web, "Работает c UI", "HTTPS")
+Rel(web, api, "REST API", "HTTPS")
+Rel(api, db, "CRUD", "JDBC")
+Rel(api, cache, "Cache-Aside", "RESP")
+Rel(api, kafka, "Публикует события", "Kafka protocol")
+Rel(worker, kafka, "Читает события", "Kafka protocol")
+Rel(worker, db, "Обновляет статус", "JDBC")
+Rel(api, paymentProvider, "Создание платежа", "HTTPS")
+
+@enduml
+
