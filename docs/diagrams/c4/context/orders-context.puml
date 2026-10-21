@@ -1,0 +1,17 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title Order Context - Context
+
+Person(customer, "Customers", "Пользователь оформляет заказы")
+System(system, "Orders System", "Оформление и обработка заказов")
+
+System_Ext(paymentProvider, "Payment Provider", "Внешний провайдер платежей")
+System_Ext(emailService, "Email Service", "Отправка E-mail")
+
+Rel(customer, system, "Создает заказы, смотрит статусы", "HTTPS")
+Rel(system, paymentProvider, "Создает платеж", "HTTPS")
+Rel(system, emailService, "Шлет уведомления", "SMTP/HTTP")
+
+@enduml
