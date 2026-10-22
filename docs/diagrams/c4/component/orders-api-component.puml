@@ -1,0 +1,23 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Core API - Components
+
+Container_Boundary(api, "CORE API (Spring Boot)") {
+
+    Component(controller, "OrderController", "Spring MVC/WebFlux Controller", "HTTP endpoints")
+    Component(service, "OrderService", "Service", "Бизнес-операции по заказам")
+    Component(paymentClient, "PaymentClient", "HTTP Client", "Интеграция с платежным провайдером")
+    Component(orderRepository, "OrderRepository", "Repository", "Доступ к данным")
+    Component(kafkaProducer, "EventPublisher", "Kafka Producer", "Публикация событий")
+    ComponentDb(db, "PostgreSQL", "DB", "orders/payments")
+
+}
+
+Rel(controller, service, "calls")
+Rel(service, orderRepository, "calls")
+Rel(service, paymentClient, "calls")
+Rel(service, kafkaProducer, "publishEvent")
+Rel(orderRepository, db, "reads/writes")
+
+@enduml
